@@ -7,3 +7,8 @@ oyunda rakip taşlarını yan yana vb. gelmesin diye karşı oyuncunun oyununu b
 
 ![Oyunun resmi](https://github.com/kriyushell/Hedef_4_oyunu/blob/main/image_2025-01-04_115102418.png)
 
+------------------
+
+gcc ile derleme: 
+
+```gcc main.c -o game.exe```
