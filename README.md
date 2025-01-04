@@ -9,6 +9,9 @@ oyunda rakip taşlarını yan yana vb. gelmesin diye karşı oyuncunun oyununu b
 
 ------------------
 
+git ile indirme:
+```git clone https://github.com/kriyushell/Hedef_4_oyunu.git```
+
 gcc ile derleme: 
 
 ```gcc main.c -o game.exe```
