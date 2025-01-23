@@ -13,14 +13,26 @@ int board[6][7] = {
         {' ',' ',' ',' ',' ',' ',' '},
         {' ',' ',' ',' ',' ',' ',' '}
 };
-int counter = 1;
+
+struct back_step_data {
+    int x_coordinate;
+    int y_coordinate;
+};
+
+struct back_step_data back_step;
+
+int counter = 0;
 char current_player;
 const char players[2][8] = {"Kirmizi", "Yesil"};
+
+// Is there a right of withdrawal?
+int right_of_withdrawal = 0;
 
 void print_board();
 void print_info();
 int check_to_win(int current_player);
 int play(int current_player);
+int check_input_character(char character);
 
 //////// MAIN ////////
 int main() {
@@ -38,7 +50,15 @@ int main() {
 
 
         while (wasnt_it_placed){
-            printf("\n\nIstediginiz sutun dolu!! baska bir sutun secin!!\n\n");
+            if(wasnt_it_placed == 1){
+                printf("\n\nIstediginiz sutun dolu!! baska bir sutun secin!!\n\n");
+            }else if (wasnt_it_placed == 2){
+                printf("\n\nGecersiz Karakter girdiniz!!!\n");
+                printf("lutven sayi[1-7] veya hamleyi geri al ('g', 'G') giriniz\n\n");
+            } else if (wasnt_it_placed == 3){
+                printf("\n\nGeri alma hakkiniz bitti!!!\n\n");
+            }
+
             printf("%s Oyuncu: ", players[current_player]);
             wasnt_it_placed = play(current_player);
         }
@@ -98,18 +118,56 @@ void print_info(){
     printf("Hedef 4 oyununda kurallar basittir. iki oyuncu vardir kirmizi(r) oyuncu ve yesil(g) oyuncu\n");
     printf("sirayla kutunun uzerinden numaralandirilmis deliklerden bir tas atarlar daha sonra sira diger oyuncuya gecer\n");
     printf("eger atilan taslardan 4 tane ayni renk ayni anda anda sag, sol, yukari, asagi ve capraz olmak sartiyla yanyana gelirse\n");
-    printf("oyunu o rengin sahibi kazanir ve oyun biter. not: 1 den 7 ye kadar olan bir sayi girmeniz yeterli\n\n\n");
+    printf("oyunu o rengin sahibi kazanir ve oyun biter. not: 1 den 7 ye kadar olan bir sayi girmeniz yeterli\n");
+    printf("oyunda yanlizca bir hamlenizi geri alma sansiniz vardir. hamlenizi geri almak icin 'g' ve 'G'(geri) giriniz.\n\n\n");
+}
+int check_input_character(char character){
+    if(character >= '1' && character <= '7'){
+        return ( (int)character - (int)'7' + 7);
+    } else if (character == 'g'){
+        return (int)character;
+    }else if (character == 'G'){
+        return (int)character;
+    }else{
+        return 0;
+    }
 }
 
+
 int play(int current_player){
-    int column_number;
-    scanf("%d", &column_number);
+    char input_character;
+    scanf("%c", &input_character);
+    // clear buffer
+    while (getchar() != '\n');
+
+    int column_number = check_input_character(input_character);
+    if(column_number == 0){
+        return 2;
+    }
+    if((char)column_number == 'g' || (char)column_number == 'G'){
+        if(right_of_withdrawal == 1){
+            board[back_step.y_coordinate][back_step.x_coordinate] = ' ';
+            right_of_withdrawal = 0;
+            return 0;
+        }else{
+            return 3;
+        }
+    }
+
+
     column_number--;
 
     int wasnt_it_placed = 1;
     for (int y = 5; y >= 0 ; y--) {
         if(board[y][column_number] == ' '){
-            board[y][column_number] = current_player ? 'g' : 'r';
+            char player = current_player ? 'g' : 'r';
+
+            board[y][column_number] = player;
+
+            back_step.x_coordinate = column_number;
+            back_step.y_coordinate = y;
+
+            right_of_withdrawal = 1;
             wasnt_it_placed = 0;
             break;
         }
@@ -171,3 +229,4 @@ int check_to_win(int current_player) {
 
     return 0;
 }
+
